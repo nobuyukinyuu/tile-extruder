@@ -1,6 +1,6 @@
 ![](extruder_title.png) 
 ================
-Extrude and pad tilemaps.  No more seams!
+Extrude and pad tilesets.  No more seams!
 
 ## How to use
   Having trouble with seams in your tilemap rendering?  TileExtruder can help, taking the edge pixels of all tiles in a tileset, reversing the edge pixels in a "bidi" fashion, and extruding them outwards by the value you specify.  In addition, TileExtruder can space tiles a certain distance apart to prevent tiles from bleeding into each other.
