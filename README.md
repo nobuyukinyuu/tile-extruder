@@ -19,6 +19,7 @@ All arguments can specify 1 or more parameters.  If an argument requires 2 param
 
 ## Current Issues
 * Setting a pad value greater than the tile's dimensions can result in an incorrect extrusion.
+* Output is automatically converted to 32bpp.
 
 ##Donate
 If you like this project, please consider giving a small donation to support further development.
