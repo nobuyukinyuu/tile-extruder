@@ -19,6 +19,8 @@ Module Module1
 
             'Get help
             If args.Item(0) = "-h" Or args.Item(0).Contains("-help") Then
+                Console.WriteLine(vbNewLine & "TileExtruder " & My.Application.Info.Version.ToString & " by Nobuyuki.")
+                Console.WriteLine("Get the latest version at https://github.com/nobuyukinyuu/tile-extruder" & vbNewLine)
                 PrintUsage()
                 PrintHelp()
                 End
@@ -27,7 +29,7 @@ Module Module1
             'Check to see if input file exists.
             If Not IO.File.Exists(args.Item(0)) Then
                 Console.WriteLine("Error:  Input file does not exist.")
-                'End
+                End
             End If
 
             'Get input / output filenames
