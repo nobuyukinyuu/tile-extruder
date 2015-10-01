@@ -208,7 +208,7 @@ Module Module1
                         Dim bb As Integer = (Int(px1.B) + Int(px2.B) + Int(px3.B) + Int(px4.B)) / 4
 
                         fill = Color.FromArgb(aa, rr, gg, bb)
-                    Else
+                    ElseIf diagProcessLevel = 1 Then
                         fill = b.GetPixel(srcRect.X, srcRect.Y) 'UL
                     End If
                     g.FillRectangle(New SolidBrush(fill), destx - xPad, desty - yPad, TileW + xPad * 2, TileH + yPad * 2)
