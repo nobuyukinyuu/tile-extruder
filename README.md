@@ -21,7 +21,6 @@ All arguments can specify 1 or more parameters.  If an argument requires 2 param
 * Setting a pad value greater than the tile's dimensions can result in an incorrect extrusion.
 * Output is automatically converted to 32bpp.
 
-
-##Donate
+## Donate
 If you like this project, please consider giving a small donation to support further development.
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RHZMPB4RL3T82&lc=US&item_name=Nobu%27s%20Monkey%2dX%20projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted)
