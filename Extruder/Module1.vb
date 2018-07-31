@@ -7,7 +7,11 @@ Module Module1
     Dim xSpace As Integer = -1
     Dim yPad, ySpace As Integer
 
-    Dim diagProcessLevel = 1  'How should we process diagonal extrusion? 0: Don't; 1: 1st pixel; 2: Avg of corner pixels
+    Dim diagProcessLevel = 3  'How should we process diagonal extrusion? 
+                                ' 0: Don't; 
+                                ' 1: 1st pixel; 
+                                ' 2: Avg of corner pixels
+                                ' 3: Extrude corners (new default)
 
     Sub Main()
         If My.Application.CommandLineArgs.Count = 0 Then
@@ -133,8 +137,11 @@ Module Module1
         ArgLine("size", "Size of an individual tile in this set.")
         ArgLine("pad", "Amount each tile is looped/extruded past its border.")
         ArgLine("space", "Amount of empty space between each tile.")
-        ArgLine("diag", "Diagonal pixel extrusion fill mode. (default: 1)", False)
-        ArgLine("", "0: No fill; 1: Use first pixel; 1: Average corner pixels.")
+        ArgLine("diag", "Diagonal pixel extrusion fill mode. (default: 3)", False)
+        ArgLine("", " 0: No fill;")
+        ArgLine("", " 1: Use first pixel; ")
+        ArgLine("", " 2: Average corner pixels.")
+        ArgLine("", " 3: Extrude corners diagonally")
 
         Console.WriteLine()
     End Sub
@@ -183,6 +190,10 @@ Module Module1
         o.SetResolution(b.HorizontalResolution, b.VerticalResolution)
         Dim g As Graphics = Graphics.FromImage(o)
 
+        Dim tw, th As Integer
+        tw = TileW/2
+        th = TileH/2
+
         'Get all the source rects and chooch them from the original file.
         For y = 0 To yTiles - 1
             For x = 0 To xTiles - 1
@@ -194,24 +205,45 @@ Module Module1
                 'First, if we have any corner extruding to do, we need to apply a flat color for diagonals.
                 If xPad > 0 Or yPad > 0 And diagProcessLevel > 0 Then
                     Dim fill As Color
-                    If diagProcessLevel = 2 Then
-                        'Average the edge pixels.
-                        Dim px1, px2, px3, px4 As Color
-                        px1 = b.GetPixel(srcRect.X, srcRect.Y) 'UL
-                        px2 = b.GetPixel(srcRect.X + TileW - 1, srcRect.Y) 'UR
-                        px3 = b.GetPixel(srcRect.X, srcRect.Y + TileH - 1) 'LL
-                        px4 = b.GetPixel(srcRect.X + TileW - 1, srcRect.Y + TileH - 1) 'LR
+                    If diagProcessLevel = 3 Then
+                        'Extrude corner
 
-                        Dim aa As Integer = (Int(px1.A) + Int(px2.A) + Int(px3.A) + Int(px4.A)) / 4
-                        Dim rr As Integer = (Int(px1.R) + Int(px2.R) + Int(px3.R) + Int(px4.R)) / 4
-                        Dim gg As Integer = (Int(px1.G) + Int(px2.G) + Int(px3.G) + Int(px4.G)) / 4
-                        Dim bb As Integer = (Int(px1.B) + Int(px2.B) + Int(px3.B) + Int(px4.B)) / 4
+                        'Top Left
+                        fill = b.GetPixel(srcRect.X, srcRect.Y)
+                        g.FillRectangle(New SolidBrush(fill), destx - xPad, desty - yPad, tw + xPad * 2, th + yPad * 2)
 
-                        fill = Color.FromArgb(aa, rr, gg, bb)
-                    ElseIf diagProcessLevel = 1 Then
-                        fill = b.GetPixel(srcRect.X, srcRect.Y) 'UL
+                        'Top Right
+                        fill = b.GetPixel(srcRect.X + TileW - 1, srcRect.Y)
+                        g.FillRectangle(New SolidBrush(fill), destx+tw - xPad, desty - yPad, tw + xPad * 2, th + yPad * 2)
+
+                        'Bottom Left
+                        fill = b.GetPixel(srcRect.X, srcRect.Y + TileH - 1)
+                        g.FillRectangle(New SolidBrush(fill), destx - xPad, desty+th - yPad, tw + xPad * 2, th + yPad * 2)
+
+                        'Bottom Right
+                        fill = b.GetPixel(srcRect.X + TileW - 1, srcRect.Y + TileH - 1)
+                        g.FillRectangle(New SolidBrush(fill), destx+tw - xPad, desty+th - yPad, tw + xPad * 2, th + yPad * 2)
+
+                    Else
+                        If diagProcessLevel = 2 Then
+                            'Average the edge pixels.
+                            Dim px1, px2, px3, px4 As Color
+                            px1 = b.GetPixel(srcRect.X, srcRect.Y) 'UL
+                            px2 = b.GetPixel(srcRect.X + TileW - 1, srcRect.Y) 'UR
+                            px3 = b.GetPixel(srcRect.X, srcRect.Y + TileH - 1) 'LL
+                            px4 = b.GetPixel(srcRect.X + TileW - 1, srcRect.Y + TileH - 1) 'LR
+
+                            Dim aa As Integer = (Int(px1.A) + Int(px2.A) + Int(px3.A) + Int(px4.A)) / 4
+                            Dim rr As Integer = (Int(px1.R) + Int(px2.R) + Int(px3.R) + Int(px4.R)) / 4
+                            Dim gg As Integer = (Int(px1.G) + Int(px2.G) + Int(px3.G) + Int(px4.G)) / 4
+                            Dim bb As Integer = (Int(px1.B) + Int(px2.B) + Int(px3.B) + Int(px4.B)) / 4
+
+                            fill = Color.FromArgb(aa, rr, gg, bb)
+                        ElseIf diagProcessLevel = 1 Then
+                            fill = b.GetPixel(srcRect.X, srcRect.Y) 'UL
+                        End If
+                        g.FillRectangle(New SolidBrush(fill), destx - xPad, desty - yPad, TileW + xPad * 2, TileH + yPad * 2)
                     End If
-                    g.FillRectangle(New SolidBrush(fill), destx - xPad, desty - yPad, TileW + xPad * 2, TileH + yPad * 2)
                 End If
 
                 'Finally, copy the source tile and put it in the destination bitmap.
